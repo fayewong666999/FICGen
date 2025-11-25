@@ -14,7 +14,19 @@ FICGen: Frequency-Inspired Contextual Disentanglement for Layout-driven Degraded
 <img src="assets/corefigure.jpg" width="800">
 
 ## News
-- **2025-11-25**: 🔥🔥🔥 Training code have been released. Recommanded Hardware: at least 1x NVIDIA GeForce RTX 3090, GPUs Memory: ~24GB GPU memory.
+- **2025-11-25**: 🔥🔥🔥 Training and inference code have been released. Recommanded Hardware: at least 1x NVIDIA GeForce RTX 3090, GPUs Memory: ~24GB GPU memory.
+
+<a id="Gallery"></a>
+## Gallery
+**Qualitative Comparison**
+![attr_control](assets/results.jpg)
+**Underwater Controllable Generation**
+![quantity_control](assets/fulucrcruod.jpg)
+**Adverse Weather Controllable Generation**
+![animation_creation](assets/fulucrcdawn.jpg)
+
+
+<a id="Installation"></a>
 
 - ## 1.Installation
 
@@ -36,7 +48,8 @@ pip install -e .
 **2.1 Training Data Preparation**
 Take the remote sensing dataset DIOR as an example:
 - Download [DIOR](https://arxiv.org/abs/1909.00133) dataset. 
-- The global prompts are obtained by [BLIP-2](https://huggingface.co/docs/transformers/main/model_doc/blip-2), and the text-image similarities are obtained by [CLIP](https://github.com/openai/CLIP)(dior_emb.pt from data_tools/CLIPmodel.py).
+- The global prompts are obtained by [BLIP-2](https://huggingface.co/docs/transformers/main/model_doc/blip-2), and the text-image similarities are obtained by [CLIP](https://github.com/openai/CLIP)(dior_emb.pt from [data_tools/CLIPmodel.py](https://github.com/fayewong666999/FICGen/data_tools/CLIPmodel.py)).
+- All dataset annotations are uniformly converted into COCO format (e.g., instances_train.json in [MMDetection2.25.3](https://github.com/open-mmlab/mmdetection/tree/v2.25.3)) using [datasets/gen2coco.py](https://github.com/fayewong666999/FICGen/datasets/gen2coco.py), enabling consistent preprocessing and downstream trainability evaluation.
 - The class-specific dictionary is collected from the training set ([data_tools/data_crop.py](https://github.com/fayewong666999/FICGen/data_tools/data_crop.py)) and the metadata.jsonl file for organizing the training and test data follows [datasets/data_process.py](https://github.com/fayewong666999/FICGen/datasets/data_process.py).
 
 The final dataset should be ordered as follow:
@@ -124,3 +137,4 @@ Our work is based on [stable diffusion](https://github.com/Stability-AI/StableDi
   year={2025}
 }
 ```
+
