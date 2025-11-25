@@ -40,38 +40,18 @@ for item in captions:
         xmax = xmax / width
         ymax = ymax / height
         cate = cate.lower()
+       
         classes.append(cate)
         bndboxes.append([xmin, ymin, xmax, ymax])
         obndboxes.append([xmin, ymin, xmax, ymin, xmax, ymax, xmin, ymax])
-        
     if len(classes) > thr:
         classes = classes[:thr]
         bndboxes = bndboxes[:thr]
         obndboxes = obndboxes[:thr]
-        
-    _, new_boxes, new_classes = create_masks_with_overlap(bndboxes, classes, H=512, W=512)
-    new_obndboxes = []
-    new_classes = [re.sub(r"_\d+", "", cate) for cate in new_classes]
-    for bbox in new_boxes:
-        xmin, ymin, xmax, ymax = bbox
-        new_obndboxes.append([xmin, ymin, xmax, ymin, xmax, ymax, xmin, ymax])
-    
-    if len(new_classes) > 25:
-        new_classes = new_classes[:25]
-        new_boxes = new_boxes[:25]
-        new_obndboxes = new_obndboxes[:25]
-        
-    while len(new_classes) < 25:
-        new_classes.append("")
-        new_boxes.append([0,0,0,0])
-        new_obndboxes.append([0,0,0,0,0,0,0,0])
-        
-    caplist = [caption] + new_classes
-    dictin["caption"] = caplist
-    dictin["bndboxes"] = new_boxes
-    dictin["obboxes"] = new_obndboxes
-    
-    listin.append(dictin.copy())
+    while len(classes) < thr:
+        classes.append("")
+        bndboxes.append([0,0,0,0])
+        obndboxes.append([0,0,0,0,0,0,0,0])
     
 with open("test/metadata.jsonl","w", encoding="utf-8") as f:
     for item in listin:

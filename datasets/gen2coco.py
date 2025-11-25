@@ -17,10 +17,10 @@ def anno_parser(anno_path, dataset_name="DIOR"):
    
 
     
-coco_format_save_path='/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/coco2017/annotations/'   #要生成的标准coco格式标签所在文件夹
-yolo_format_classes_path='/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/coco2017/names.txt'     #类别文件，一行一个类
-yolo_format_annotation_path='/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/coco2017/labels/'  #yolo格式标签所在文件夹
-img_pathDir='/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/coco2017/train/'    #图片所在文件夹
+coco_format_save_path='/cpfs/user/wenzhuangwang/FICGen/datasets/dior/annotations/'   #要生成的标准coco格式标签所在文件夹
+yolo_format_classes_path='/cpfs/user/wenzhuangwang/FICGen/datasets/dior/names.txt'     #类别文件，一行一个类
+yolo_format_annotation_path='/cpfs/user/wenzhuangwang/FICGen/datasets/dior/labels/'  #yolo格式标签所在文件夹
+img_pathDir='/cpfs/user/wenzhuangwang/FICGen/datasets/dior/train/'    #图片所在文件夹
 
 with open(yolo_format_classes_path,'r') as fr:                               #打开并读取类别文件
     lines1=fr.readlines()
@@ -31,8 +31,7 @@ for j,label in enumerate(lines1):
     label=label.strip()
     categories.append({'id':j+1,'name':label,'supercategory':'None'})         #将类别信息添加到categories中
 # print(categories)
-categories = [{'supercategory': 'person', 'id': 1, 'name': 'person'}, {'supercategory': 'vehicle', 'id': 2, 'name': 'bicycle'}, {'supercategory': 'vehicle', 'id': 3, 'name': 'car'}, {'supercategory': 'vehicle', 'id': 4, 'name': 'motorcycle'}, {'supercategory': 'vehicle', 'id': 5, 'name': 'airplane'}, {'supercategory': 'vehicle', 'id': 6, 'name': 'bus'}, {'supercategory': 'vehicle', 'id': 7, 'name': 'train'}, {'supercategory': 'vehicle', 'id': 8, 'name': 'truck'}, {'supercategory': 'vehicle', 'id': 9, 'name': 'boat'}, {'supercategory': 'outdoor', 'id': 10, 'name': 'traffic light'}, {'supercategory': 'outdoor', 'id': 11, 'name': 'fire hydrant'}, {'supercategory': 'outdoor', 'id': 13, 'name': 'stop sign'}, {'supercategory': 'outdoor', 'id': 14, 'name': 'parking meter'}, {'supercategory': 'outdoor', 'id': 15, 'name': 'bench'}, {'supercategory': 'animal', 'id': 16, 'name': 'bird'}, {'supercategory': 'animal', 'id': 17, 'name': 'cat'}, {'supercategory': 'animal', 'id': 18, 'name': 'dog'}, {'supercategory': 'animal', 'id': 19, 'name': 'horse'}, {'supercategory': 'animal', 'id': 20, 'name': 'sheep'}, {'supercategory': 'animal', 'id': 21, 'name': 'cow'}, {'supercategory': 'animal', 'id': 22, 'name': 'elephant'}, {'supercategory': 'animal', 'id': 23, 'name': 'bear'}, {'supercategory': 'animal', 'id': 24, 'name': 'zebra'}, {'supercategory': 'animal', 'id': 25, 'name': 'giraffe'}, {'supercategory': 'accessory', 'id': 27, 'name': 'backpack'}, {'supercategory': 'accessory', 'id': 28, 'name': 'umbrella'}, {'supercategory': 'accessory', 'id': 31, 'name': 'handbag'}, {'supercategory': 'accessory', 'id': 32, 'name': 'tie'}, {'supercategory': 'accessory', 'id': 33, 'name': 'suitcase'}, {'supercategory': 'sports', 'id': 34, 'name': 'frisbee'}, {'supercategory': 'sports', 'id': 35, 'name': 'skis'}, {'supercategory': 'sports', 'id': 36, 'name': 'snowboard'}, {'supercategory': 'sports', 'id': 37, 'name': 'sports ball'}, {'supercategory': 'sports', 'id': 38, 'name': 'kite'}, {'supercategory': 'sports', 'id': 39, 'name': 'baseball bat'}, {'supercategory': 'sports', 'id': 40, 'name': 'baseball glove'}, {'supercategory': 'sports', 'id': 41, 'name': 'skateboard'}, {'supercategory': 'sports', 'id': 42, 'name': 'surfboard'}, {'supercategory': 'sports', 'id': 43, 'name': 'tennis racket'}, {'supercategory': 'kitchen', 'id': 44, 'name': 'bottle'}, {'supercategory': 'kitchen', 'id': 46, 'name': 'wine glass'}, {'supercategory': 'kitchen', 'id': 47, 'name': 'cup'}, {'supercategory': 'kitchen', 'id': 48, 'name': 'fork'}, {'supercategory': 'kitchen', 'id': 49, 'name': 'knife'}, {'supercategory': 'kitchen', 'id': 50, 'name': 'spoon'}, {'supercategory': 'kitchen', 'id': 51, 'name': 'bowl'}, {'supercategory': 'food', 'id': 52, 'name': 'banana'}, {'supercategory': 'food', 'id': 53, 'name': 'apple'}, {'supercategory': 'food', 'id': 54, 'name': 'sandwich'}, {'supercategory': 'food', 'id': 55, 'name': 'orange'}, {'supercategory': 'food', 'id': 56, 'name': 'broccoli'}, {'supercategory': 'food', 'id': 57, 'name': 'carrot'}, {'supercategory': 'food', 'id': 58, 'name': 'hot dog'}, {'supercategory': 'food', 'id': 59, 'name': 'pizza'}, {'supercategory': 'food', 'id': 60, 'name': 'donut'}, {'supercategory': 'food', 'id': 61, 'name': 'cake'}, {'supercategory': 'furniture', 'id': 62, 'name': 'chair'}, {'supercategory': 'furniture', 'id': 63, 'name': 'couch'}, {'supercategory': 'furniture', 'id': 64, 'name': 'potted plant'}, {'supercategory': 'furniture', 'id': 65, 'name': 'bed'}, {'supercategory': 'furniture', 'id': 67, 'name': 'dining table'}, {'supercategory': 'furniture', 'id': 70, 'name': 'toilet'}, {'supercategory': 'electronic', 'id': 72, 'name': 'tv'}, {'supercategory': 'electronic', 'id': 73, 'name': 'laptop'}, {'supercategory': 'electronic', 'id': 74, 'name': 'mouse'}, {'supercategory': 'electronic', 'id': 75, 'name': 'remote'}, {'supercategory': 'electronic', 'id': 76, 'name': 'keyboard'}, {'supercategory': 'electronic', 'id': 77, 'name': 'cell phone'}, {'supercategory': 'appliance', 'id': 78, 'name': 'microwave'}, {'supercategory': 'appliance', 'id': 79, 'name': 'oven'}, {'supercategory': 'appliance', 'id': 80, 'name': 'toaster'}, {'supercategory': 'appliance', 'id': 81, 'name': 'sink'}, {'supercategory': 'appliance', 'id': 82, 'name': 'refrigerator'}, {'supercategory': 'indoor', 'id': 84, 'name': 'book'}, {'supercategory': 'indoor', 'id': 85, 'name': 'clock'}, {'supercategory': 'indoor', 'id': 86, 'name': 'vase'}, {'supercategory': 'indoor', 'id': 87, 'name': 'scissors'}, {'supercategory': 'indoor', 'id': 88, 'name': 'teddy bear'}, {'supercategory': 'indoor', 'id': 89, 'name': 'hair drier'}, {'supercategory': 'indoor', 'id': 90, 'name': 'toothbrush'}]
-lines1 = {'person': 1, 'bicycle': 2, 'car': 3, 'motorcycle': 4, 'airplane': 5, 'bus': 6, 'train': 7, 'truck': 8, 'boat': 9, 'traffic light': 10, 'fire hydrant': 11, 'stop sign': 13, 'parking meter': 14, 'bench': 15, 'bird': 16, 'cat': 17, 'dog': 18, 'horse': 19, 'sheep': 20, 'cow': 21, 'elephant': 22, 'bear': 23, 'zebra': 24, 'giraffe': 25, 'backpack': 27, 'umbrella': 28, 'handbag': 31, 'tie': 32, 'suitcase': 33, 'frisbee': 34, 'skis': 35, 'snowboard': 36, 'sports ball': 37, 'kite': 38, 'baseball bat': 39, 'baseball glove': 40, 'skateboard': 41, 'surfboard': 42, 'tennis racket': 43, 'bottle': 44, 'wine glass': 46, 'cup': 47, 'fork': 48, 'knife': 49, 'spoon': 50, 'bowl': 51, 'banana': 52, 'apple': 53, 'sandwich': 54, 'orange': 55, 'broccoli': 56, 'carrot': 57, 'hot dog': 58, 'pizza': 59, 'donut': 60, 'cake': 61, 'chair': 62, 'couch': 63, 'potted plant': 64, 'bed': 65, 'dining table': 67, 'toilet': 70, 'tv': 72, 'laptop': 73, 'mouse': 74, 'remote': 75, 'keyboard': 76, 'cell phone': 77, 'microwave': 78, 'oven': 79, 'toaster': 80, 'sink': 81, 'refrigerator': 82, 'book': 84, 'clock': 85, 'vase': 86, 'scissors': 87, 'teddy bear': 88, 'hair drier': 89, 'toothbrush': 90}
+
 
 import json
 annos = json.load(open(os.path.join(coco_format_save_path, "instances_train.json")))
@@ -53,7 +52,7 @@ print(num_images,num_annos)
 gt_map = {}
 
 #接下来的代码主要添加'images'和'annotations'的key值
-imageFileList=open("coco2017/metadata_gen.jsonl","r").readlines()
+imageFileList=open("dior/metadata_gen.jsonl","r").readlines()
 for item in imageFileList:
     item = eval(item)
     gt_map[item["file_name"]] = item
@@ -75,7 +74,7 @@ for i,imageFile in enumerate(imageFileList):
     img_context['height']=H
     img_context['width']=W
     img_context['date_captured']='2022-07-8'
-    img_context['id']= i +  num_images + 1 + 600000                                              #该图片的id
+    img_context['id']= i +  num_images + 1                                          #该图片的id
     img_context['license']=1
     img_context['color_url']=''
     img_context['flickr_url']=''
@@ -91,7 +90,7 @@ for i,imageFile in enumerate(imageFileList):
         # print(line.strip().split(' '))
 
         x1,y1,x2,y2=line                                          #获取每一个标注框的详细信息
-        class_id,x1, y1, x2, y2 = int(lines1[class_id.lower()]), float(x1), float(y1), float(x2), float(y2)       #将字符串类型转为可计算的int和float类型
+        class_id,x1, y1, x2, y2 = int(lines1.index(class_id.lower())), float(x1), float(y1), float(x2), float(y2)       #将字符串类型转为可计算的int和float类型
 
         xmin=int(x1 * W)                                                             #坐标转换
         ymin=int(y1 * H)
@@ -101,8 +100,8 @@ for i,imageFile in enumerate(imageFileList):
         h = ymax-ymin
 
         bbox_dict['id']=(i +  num_images + 1) * 1000+j + num_annos + 1                                                         #bounding box的坐标信息
-        bbox_dict['image_id']=i +  num_images + 1 + 600000
-        bbox_dict['category_id']=class_id                                               #注意目标类别要加一
+        bbox_dict['image_id']=i +  num_images + 1 
+        bbox_dict['category_id']=class_id + 1                                              #注意目标类别要加一
         bbox_dict['iscrowd']=0
         height,width=abs(ymax-ymin),abs(xmax-xmin)
         bbox_dict['area']=height*width
