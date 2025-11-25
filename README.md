@@ -88,37 +88,37 @@ The resolution of both the real and synthetic images is **512x512**. It should b
 
 4.2 Alignment (YOLO score, AP):
 
-We use the pre-trained YOLOv8 to calculate the AP between synthetic images (**512x512**) and ground-truth bboxes (note to modify the path in calculate_ys.py):
+We use the pre-trained YOLOv8 to calculate the AP between synthetic images (**512x512**) and ground-truth bboxes (note to modify the image path in calculate_ys.py):
 ```bash
 cd eval
 python calculate_ys.py
 ```
-For a comprehensive alignment evaluation, we utilize the pre-trained Faster R-CNN (R50) in [mmdetection2.25.3](https://github.com/open-mmlab/mmdetection/tree/v2.25.3) (note  to modify the image path in coco_detection.py):
+For a comprehensive alignment evaluation, we utilize the pre-trained Faster R-CNN (R50) in [mmdetection2.25.3](https://github.com/open-mmlab/mmdetection/tree/v2.25.3) (note  to modify the **test image path in coco_detection.py**):
 ```bash
 cd mmdetection
 python tools/test.py configs/faster_rcnn/faster_rcnn_r50_fpn_1x_coco.py work_dirs/faster_rcnn_r50_fpn_1x_dior/latest.pth --eval bbox
 ```
-When using MMDetection for alignment evaluation, ensure that synthetic images are resized to the same resolution as their corresponding real test images. For other datasets such as ExDARK and RUOD, the alignment evaluation methods are similar. Pay attention to the correctness of the synthetic image paths.
+**When using MMDetection for alignment evaluation, ensure that synthetic images are resized to the same resolution as their corresponding real test images.** For other datasets such as ExDARK and RUOD, the alignment evaluation methods are similar. Pay attention to the correctness of the synthetic image paths.
 
 4.3 Trainability (downstream AP performance):
 
-(1) We first apply augmentation to the ground-truth bboxes in the training set, including random flip, translation, and scaling, and then combine the original training annotations to generate new annotation files (instances_train_mix.json) in mmdetection:
+(1) We first apply augmentation to the ground-truth bboxes (**e.g., train/metadata.jsonl**) in the training set, including random flip, translation, and scaling, and then combine the original training annotations (instances_train.json) to generate new annotation files (instances_train_mix.json) in mmdetection:
 ```
 cd datasets
 python augmentation_box.py
 python gen2coco.py
 ```
-(2) We generate auxiliary training images based on the newly augmented annotations (metadata_gen.jsonl from augmentation_box.py) and move these synthetic images to the real training image folder::
+(2) We generate auxiliary training images based on the newly augmented annotations (**metadata_gen.jsonl from augmentation_box.py**) and move these synthetic images to the real training image folder::
 ```
 cd ..
 python inference.py
 ```
-(3) For a comprehensive trainability evaluation, we utilize the pre-trained Faster R-CNN (R50) in [mmdetection2.25.3](https://github.com/open-mmlab/mmdetection/tree/v2.25.3) (note  to modify the image and annotation path in coco_detection.py):
+(3) For a comprehensive trainability evaluation, we utilize the pre-trained Faster R-CNN (R50) in [mmdetection2.25.3](https://github.com/open-mmlab/mmdetection/tree/v2.25.3) (note to modify **the training image and annotation path** in coco_detection.py):
 ```bash
 cd mmdetection
 bash tools/dist_train.sh configs/faster_rcnn/faster_rcnn_r50_fpn_1x_coco.py 8 --work-dir work_dirs/faster_rcnn_r50_fpn_1x_dior_mix
 ```
-For other datasets such as ExDARK and RUOD, the trainability evaluation methods are similar. Pay attention to the correctness of the synthetic image and annotation paths.
+**Note that each synthesized training image should either match the resolution of its corresponding real image or, if different, correspond correctly to the augmented annotations.** For other datasets such as ExDARK and RUOD, the trainability evaluation methods are similar. Pay attention to the correctness of the synthetic image and annotation paths.
 
 ## Problems/Cooperation
 - If you are interested in FICGen and wish to cooperate with us, feel free to contact us.
@@ -137,5 +137,6 @@ Our work is based on [stable diffusion](https://github.com/Stability-AI/StableDi
   year={2025}
 }
 ```
+
 
 
