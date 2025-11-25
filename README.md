@@ -91,6 +91,7 @@ The resolution of both the real and synthetic images is **512x512**. It should b
 We use the pre-trained YOLOv8 to calculate the AP between synthetic images (**512x512**) and ground-truth bboxes (note to modify the image path in calculate_ys.py):
 ```bash
 cd eval
+pip install ultralytics
 python calculate_ys.py
 ```
 For a comprehensive alignment evaluation, we utilize the pre-trained Faster R-CNN (R50) in [mmdetection2.25.3](https://github.com/open-mmlab/mmdetection/tree/v2.25.3) (note  to modify the **test image path in coco_detection.py**):
@@ -137,6 +138,7 @@ Our work is based on [stable diffusion](https://github.com/Stability-AI/StableDi
   year={2025}
 }
 ```
+
 
 
 
