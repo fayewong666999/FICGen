@@ -68,7 +68,7 @@ DIOR
 
 ### 3. FICGen Training and Inference
 
-Train our FICGen model:
+Train our FICGen model (Please pay attention to the image paths of the dataset):
 ```
 bash dist_train_ficgen.sh
 ```
@@ -84,11 +84,11 @@ python inference.py
 pip install torch-fidelity
 fidelity --gpu 0 --fid --input1 real_images_dir --input2 synthetic_images_dir
 ```
-It should be noted that in the process of evaluating the fidelity of remote sensing images, the Inception network has been pre-trained on RSICD. Please refer to [AeroGen](https://github.com/Sonettoo/AeroGen).
+The resolution of both the real and synthetic images is **512x512**. It should be noted that in the process of evaluating the fidelity of remote sensing images, the Inception network has been pre-trained on RSICD. Please refer to [AeroGen](https://github.com/Sonettoo/AeroGen).
 
 4.2 Alignment (YOLO score, AP):
 
-We use the pre-trained YOLOv8 to calculate the AP between synthetic images and ground-truth bboxes (note to modify the path in calculate_ys.py):
+We use the pre-trained YOLOv8 to calculate the AP between synthetic images (**512x512**) and ground-truth bboxes (note to modify the path in calculate_ys.py):
 ```bash
 cd eval
 python calculate_ys.py
@@ -98,7 +98,7 @@ For a comprehensive alignment evaluation, we utilize the pre-trained Faster R-CN
 cd mmdetection
 python tools/test.py configs/faster_rcnn/faster_rcnn_r50_fpn_1x_coco.py work_dirs/faster_rcnn_r50_fpn_1x_dior/latest.pth --eval bbox
 ```
-For other datasets such as ExDARK and RUOD, the alignment evaluation methods are similar. Pay attention to the correctness of the synthetic image paths.
+When using MMDetection for alignment evaluation, ensure that synthetic images are resized to the same resolution as their corresponding real test images. For other datasets such as ExDARK and RUOD, the alignment evaluation methods are similar. Pay attention to the correctness of the synthetic image paths.
 
 4.3 Trainability (downstream AP performance):
 
@@ -137,4 +137,5 @@ Our work is based on [stable diffusion](https://github.com/Stability-AI/StableDi
   year={2025}
 }
 ```
+
 
