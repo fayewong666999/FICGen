@@ -1,20 +1,20 @@
 # dataset settings
 dataset_type = 'CocoDataset'
-#data_root = '/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/voc/'
-data_root = '/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/ruod/'
-#data_root = '/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/exdark/'
-#data_root = '/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/hrsc2016/'
+#data_root = '/cpfs/user/wenzhuangwang/FICGen/datasets/voc/'
+#data_root = '/cpfs/user/wenzhuangwang/FICGen/datasets/ruod/'
+#data_root = '/cpfs/user/wenzhuangwang/FICGen/datasets/exdark/'
+#data_root = '/cpfs/user/wenzhuangwang/FICGen/datasets/hrsc2016/'
 #data_root = '/cpfs/user/wenzhuangwang/Ctrl-RS/datasets/hrrsd/'
-#data_root = '/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/lis/'
-#data_root = '/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/dota/'
-#data_root = '/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/dior/'
-#data_root = '/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/acdc/'
-#data_root = '/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/dawn/'
-#data_root = '/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/camo/'
+#data_root = '/cpfs/user/wenzhuangwang/FICGen/datasets/lis/'
+#data_root = '/cpfs/user/wenzhuangwang/FICGen/datasets/dota/'
+data_root = '/cpfs/user/wenzhuangwang/FICGen/datasets/dior/'
+#data_root = '/cpfs/user/wenzhuangwang/FICGen/datasets/acdc/'
+#data_root = '/cpfs/user/wenzhuangwang/FICGen/datasets/dawn/'
+#data_root = '/cpfs/user/wenzhuangwang/FICGen/datasets/camo/'
 #data_root = "/cpfs/user/wenzhuangwang/geodiffusion/data/nuimages/"
-#data_root = '/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/coco2017/'
-#data_root = '/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/voc/'
-#data_root = "/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/deepspace/"
+#data_root = '/cpfs/user/wenzhuangwang/FICGen/datasets/coco2017/'
+#data_root = '/cpfs/user/wenzhuangwang/FICGen/datasets/voc/'
+#data_root = "/cpfs/user/wenzhuangwang/FICGen/datasets/deepspace/"
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 train_pipeline = [
@@ -53,11 +53,11 @@ data = dict(
     val=dict(
         type=dataset_type,
         ann_file=data_root + 'annotations/instances_test.json',
-        img_prefix='/cpfs/user/wenzhuangwang/FICGen/generated_images/ruod_wonewfilmm/',
+        img_prefix='/cpfs/user/wenzhuangwang/FICGen/generated_images/dior/',
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
         ann_file=data_root + 'annotations/instances_test.json',
-        img_prefix='/cpfs/user/wenzhuangwang/FICGen/generated_images/ruod_wonewfilmm/',
+        img_prefix='/cpfs/user/wenzhuangwang/FICGen/generated_images/dior/',
         pipeline=test_pipeline))
 evaluation = dict(interval=1, metric='bbox', classwise=True)

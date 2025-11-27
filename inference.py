@@ -3,8 +3,11 @@ from diffusers import EulerDiscreteScheduler, StableDiffusionPipeline, Autoencod
 from diffusers.loaders import AttnProcsLayers
 import os, json, random
 from PIL import Image
+import argparse
 import torch
 import cv2
+import functools
+import imagesize
 import numpy as np
 from safetensors.torch import load_file
 from diffusers.loaders import TextualInversionLoaderMixin
@@ -28,9 +31,8 @@ from transformers import (
 from torchvision import transforms
 import inspect
 from src.attention_processor import set_processors
-from src.utils import dict_of_images, find_nearest, get_similar_examplers, seed_everything
+from src.utils import get_classnames, find_nearest, get_similar_examplers, seed_everything
 from src.projection import Resampler, SerialSampler
-from src.modules import FrozenDinoV2Encoder
 
 logger = logging.get_logger(__name__)
 
@@ -51,14 +53,13 @@ class StableDiffusionMIPipeline(StableDiffusionPipeline):
         parent_init_signature = inspect.signature(super().__init__)
         parent_init_params = parent_init_signature.parameters 
         self.text_projector = CLIPTextModelWithProjection.from_pretrained('/cpfs/user/wenzhuangwang/aerogen/ckpt/clip/clip-vit-large-patch14')
-        self.image_encoder = FrozenDinoV2Encoder()
         self.image_proj_model = SerialSampler(
             dim=1280,
             depth=4,
             dim_head=64,
             # heads=20,
             num_queries=[16, 8, 8],
-            embedding_dim=self.image_encoder.model.embed_dim,
+            embedding_dim=1024,
             output_dim=unet.config.cross_attention_dim,
             ff_mult=4,
         )
@@ -300,6 +301,9 @@ class StableDiffusionMIPipeline(StableDiffusionPipeline):
             prompt: List[List[str]] = None,
             obboxes: List[List[List[float]]] = None,
             bboxes: List[List[List[float]]] = None,
+            img_patch_path: List[List[str]] = None,
+            bg_path: List[List[str]] = None,
+            data_path: List[List[str]] = None,
             height: Optional[int] = None,
             width: Optional[int] = None,
             num_inference_steps: int = 50,
@@ -416,7 +420,6 @@ class StableDiffusionMIPipeline(StableDiffusionPipeline):
             prompt_nums[i] = len(_)
 
         device = self._execution_device
-        self.image_encoder.to(device)
         self.text_projector.to(device)
         self.image_proj_model.to(device)
         # self.bg_proj_model.to(device)
@@ -467,8 +470,20 @@ class StableDiffusionMIPipeline(StableDiffusionPipeline):
                 ),
             ]
         )
-
         
+        dict_of_images = {}
+        list_of_name, data_emb_dict = get_classnames(data_path)
+
+        for name in list_of_name:
+            name_of_dir = os.path.join(img_patch_path, name)
+            list_of_image = os.listdir(name_of_dir)
+            list_of_image = [i for i in list_of_image if i.endswith("jpg")]
+            list_of_image = sorted(list_of_image, 
+                                   key = lambda img: functools.reduce(lambda x, y: x*y, 
+                                                                      imagesize.get(os.path.join(name_of_dir, img))
+                                                                    ), reverse=True)
+            dict_of_images[name] = {img: functools.reduce(lambda x, y: x/y, imagesize.get(os.path.join(name_of_dir, img))) for img in list_of_image[:200]}
+
         
         ref_imgs = []
         for index, (caption, bndboxes) in enumerate(zip(prompt, bboxes)):
@@ -484,7 +499,7 @@ class StableDiffusionMIPipeline(StableDiffusionPipeline):
                     except:
                         print(bbox)
                     chosen_file = list(dict_of_images[name].keys())[find_nearest(list(dict_of_images[name].values()), value)]                    
-                    img = Image.open(os.path.join('/cpfs/user/wenzhuangwang/CC-Diff-CV/content/vocblur/', name, chosen_file)).convert("RGB")
+                    img = Image.open(os.path.join(img_patch_path, name, chosen_file)).convert("RGB")
                    
                #     img = image_processor(images=img, return_tensors="pt")['pixel_values'].squeeze(0)
                     img = instance_transforms(img)
@@ -494,15 +509,9 @@ class StableDiffusionMIPipeline(StableDiffusionPipeline):
         ref_imgs = torch.stack([img for img in ref_imgs]).view(len(obboxes) * len(obboxes[0]), 3, 256, 256).to(device)
         with torch.no_grad():
             img_features = ref_imgs
-            bg_img = get_similar_examplers(None, text_embeds[0], topk=1, sim_mode='text2img')
-            file_name = os.path.join('/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/voc/train_blur/', bg_img[0])
-            try:
-                bg_img = Image.open(file_name).convert('RGB')
-            except:
-                try:
-                    bg_img = Image.open(file_name.replace("train", "val")).convert("RGB")
-                except:
-                    bg_img = Image.open(file_name.replace("train", "test")).convert("RGB")
+            bg_img = get_similar_examplers(data_emb_dict, None, text_embeds[0], topk=1, sim_mode='text2img')
+            file_name = os.path.join(bg_path, bg_img[0])
+            bg_img = Image.open(file_name).convert('RGB')
             bg_img = instance_transforms(bg_img).to(img_features.device)
             bg_features = bg_img.unsqueeze(0)
         img_features, bg_features = self.image_proj_model(img_features, obboxes, bg_features)
@@ -579,13 +588,22 @@ class StableDiffusionMIPipeline(StableDiffusionPipeline):
             images=image, nsfw_content_detected=None
         )
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Simple example of a inference script.")
+    parser.add_argument("--img_patch_path", type=str, default="/cpfs/user/wenzhuangwang/CC-Diff-CV/content/dior/")
+    parser.add_argument("--bg_path", type=str, default="/cpfs/user/wenzhuangwang/FICGen/datasets/dior/train/")
+    args = parser.parse_args()
+    return args
 if __name__ == '__main__':
+    
     sd1x_path = '/cpfs/shared/public/mmc/stable-diffusion-v1-5'
-    save_path = 'checkpoint/coco_sd15_new_up16/checkpoint-7800/'
-    data_path = '/cpfs/user/wenzhuangwang/CC-Diff-main/datasets/voc/'
+    save_path = 'checkpoint/dior_sd15_new_up16_new/checkpoint-5400/'
+    data_path = '/cpfs/user/wenzhuangwang/FICGen/datasets/dior/test/'
 
     pipe = StableDiffusionMIPipeline.from_pretrained(
         sd1x_path)
+    
+    args = parse_args()
     
     set_processors(pipe.unet)
     custom_layers = AttnProcsLayers(pipe.unet.attn_processors)
@@ -596,7 +614,7 @@ if __name__ == '__main__':
     pipe.scheduler = EulerDiscreteScheduler.from_config(pipe.scheduler.config)
     
     data = []
-    with open(os.path.join(data_path, 'metadata_gen.jsonl'), 'r') as f:
+    with open(os.path.join(data_path, 'metadata_7.jsonl'), 'r') as f:
         for line in f:
             data.append(json.loads(line))
         
@@ -605,28 +623,27 @@ if __name__ == '__main__':
     seed_everything(seed)
     generator = torch.Generator(device="cuda").manual_seed(seed)
     sample_num = len(data)
-    os.makedirs("generated_images_1x/vocblur/", exist_ok=True)
+    os.makedirs("generated_images/dior/", exist_ok=True)
     for i in range(sample_num):
         sample = data[i]
    #     sample = eval(sample)
         file_name = sample['file_name']
-        if file_name!='2010_005903_gen.jpg':
-            continue
-        gt_img = Image.open(os.path.join(data_path, "train_blur", file_name.replace("_gen", ""))).convert('RGB')
+     
+        gt_img = Image.open(os.path.join(data_path, file_name.replace("_gen", ""))).convert('RGB')
         prompt = [sample['caption']]
         obboxes = [sample['obboxes']]
         bboxes = [sample['bndboxes']]
         
         
-        image = pipe(prompt, obboxes, bboxes, num_inference_steps=50, guidance_scale=7.5, negative_prompt=negative_prompt).images[0]
-        image.save(f'generated_images_1x/vocblur/{file_name}')
+        image = pipe(prompt, obboxes, bboxes, args.img_patch_path, args.bg_path, data_path, num_inference_steps=50, guidance_scale=7.5, negative_prompt=negative_prompt).images[0]
+        image.save(f'generated_images/dior/{file_name}')
         
      
         gt_img = gt_img.resize(image.size)
         result = Image.new('RGB', (gt_img.width + image.width, image.height))
         result.paste(gt_img, (0, 0))
         result.paste(image, (image.width, 0))
-        result.save(f'generated_images_1x/vocblur/output_{file_name}')
+        result.save(f'generated_images/dior/output_{file_name}')
         
         image = pipe.draw_box_desc(image, obboxes[0], prompt[0][1:])
-        image.save(f'generated_images_1x/vocblur/anno_output_{file_name}')
+        image.save(f'generated_images/dior/anno_output_{file_name}')
