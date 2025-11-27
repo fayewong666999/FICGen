@@ -72,9 +72,9 @@ Train our FICGen model (Please pay attention to the image paths of the dataset):
 ```
 bash dist_train_ficgen.sh
 ```
-Layout-driven degraded image generation:
+Layout-driven degraded image generation (Note to modify the checkpoint path and dataset path):
 ```bash
-python inference.py
+python inference.py --img_patch_path  img_patch_path_dir --bg_path bg_path_dir
 ```
 
 ### 4. Generative Evaluations
@@ -138,6 +138,7 @@ Our work is based on [stable diffusion](https://github.com/Stability-AI/StableDi
   year={2025}
 }
 ```
+
 
 
 
