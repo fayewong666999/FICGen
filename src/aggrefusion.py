@@ -6,9 +6,9 @@ import itertools
 from inspect import isfunction
 from einops import rearrange, repeat
 from torch import einsum
-from .simple_moe import MoEConvLayer
-from .router_moe import SparseMoE
-from .gcn import GCN, gen_adj_sim
+#from .simple_moe import MoEConvLayer
+#from .router_moe import SparseMoE
+#from .gcn import GCN, gen_adj_sim
 
 def exists(val):
     return val is not None
