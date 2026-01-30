@@ -14,6 +14,7 @@ FICGen: Frequency-Inspired Contextual Disentanglement for Layout-driven Degraded
 <img src="assets/corefigure.jpg" width="800">
 
 ## News
+- **2026-1-30**: 🔥🔥🔥 The pre-trained weights on the Remote Sensing DIOR-H dataset and the alignment evaluation weights for Faster R-CNN (R50) have been released.
 - **2025-11-25**: 🔥🔥🔥 Training and inference code have been released. Recommanded Hardware: at least 1x NVIDIA GeForce RTX 3090, GPUs Memory: ~24GB GPU memory.
 
 <a id="Gallery"></a>
@@ -72,7 +73,7 @@ Train our FICGen model (Please pay attention to the image paths of the dataset):
 ```
 bash dist_train_ficgen.sh
 ```
-Layout-driven degraded image generation (Note to modify the checkpoint path and dataset path):
+Layout-driven degraded image generation (Note to modify the checkpoint path and dataset path). The pre-trained weights on the DIOR-H dataset and the alignment evaluation weights for Faster R-CNN (R50) detector can be downloaded via the [FICGen(DIOR-H)](https://drive.google.com/drive/folders/1vOn6PI4quE6_EMnwXgzYIEXufrlwc1jf?usp=sharing):
 ```bash
 python inference.py --img_patch_path  img_patch_path_dir --bg_path bg_path_dir
 ```
@@ -138,6 +139,7 @@ Our work is based on [stable diffusion](https://github.com/Stability-AI/StableDi
   year={2025}
 }
 ```
+
 
 
 
